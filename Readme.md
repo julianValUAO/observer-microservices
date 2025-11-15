@@ -329,7 +329,8 @@ docker-compose up --build
 
 ## 👥 Autores
 
-[Nombres de los integrantes del grupo]
+- Julian Andres Valencia Velez
+- Jhon David Caicedo
 
 ## 📝 Licencia
 
