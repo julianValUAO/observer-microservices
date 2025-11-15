@@ -1,0 +1,15 @@
+{
+  "name": "analytics-service",
+  "version": "1.0.0",
+  "description": "Analytics and Metrics Service - Event Consumer",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": ["microservices", "event-consumer", "analytics", "rabbitmq"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  }
+}

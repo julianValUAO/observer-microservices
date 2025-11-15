@@ -1,0 +1,20 @@
+{
+  "name": "email-service",
+  "version": "1.0.0",
+  "description": "Email Notification Service - Event Consumer",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "microservices",
+    "event-consumer",
+    "email",
+    "rabbitmq"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  }
+}

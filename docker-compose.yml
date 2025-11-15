@@ -1,0 +1,104 @@
+services:
+  # Message Broker - RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # Puerto para conexiones AMQP
+      - "15672:15672" # Puerto para Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microservices-network
+
+  # Producer API - Publica eventos
+  producer-api:
+    build:
+      context: ./producer-api
+      dockerfile: Dockerfile
+    container_name: producer-api
+    ports:
+      - "3000:3000"
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - PORT=3000
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - microservices-network
+
+  # Email Service - Consume eventos y envía emails
+  email-service:
+    build:
+      context: ./email-service
+      dockerfile: Dockerfile
+    container_name: email-service
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - SERVICE_NAME=email-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - microservices-network
+
+  # SMS Service - Consume eventos y envía SMS
+  sms-service:
+    build:
+      context: ./sms-service
+      dockerfile: Dockerfile
+    container_name: sms-service
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - SERVICE_NAME=sms-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - microservices-network
+
+  # Inventory Service - Consume eventos y actualiza inventario
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - SERVICE_NAME=inventory-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - microservices-network
+
+  # Analytics Service - Consume eventos y registra métricas
+  analytics-service:
+    build:
+      context: ./analytics-service
+      dockerfile: Dockerfile
+    container_name: analytics-service
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - SERVICE_NAME=analytics-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
